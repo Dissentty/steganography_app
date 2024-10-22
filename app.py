@@ -49,17 +49,18 @@ QMessageBox {
     color: #ffffff;
 }
 """
+
 class SuccessDialog(QDialog):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Успех")
         self.setGeometry(300, 300, 200, 100)
-        self.setWindowIcon(QIcon('icon.png'))
-        success_label = QLabel("Операция прошла успешно!", self)
+        self.setWindowIcon(QIcon('icon.ico'))
+        self.success_label = QLabel("Операция прошла успешно!", self)
         ok_button = QPushButton("Ок", self)
         ok_button.clicked.connect(self.close)
         layout = QVBoxLayout()
-        layout.addWidget(success_label)
+        layout.addWidget(self.success_label)
         layout.addWidget(ok_button)
         self.setLayout(layout)
 
@@ -68,7 +69,7 @@ class SaveFileDialog(QDialog):
         super().__init__()
         self.setWindowTitle("Сохранить файл")
         self.setGeometry(200, 200, 300, 100)
-        self.setWindowIcon(QIcon('icon.png'))
+        self.setWindowIcon(QIcon('icon.ico'))
 
         self.save_button = QPushButton("Выбрать место для сохранения", self)
         self.save_button.clicked.connect(self.select_save_location)
@@ -96,7 +97,7 @@ class MainWindow(QMainWindow):
 
         self.setWindowTitle("Стеганография: Выбор файла")
         self.setGeometry(100, 100, 400, 200)
-        self.setWindowIcon(QIcon('icon.png'))
+        self.setWindowIcon(QIcon('icon.ico'))
 
         self.label = QLabel("Файл не выбран", self)
 
@@ -109,11 +110,15 @@ class MainWindow(QMainWindow):
         self.encode_button = QPushButton("Начать стеганографию", self)
         self.encode_button.clicked.connect(self.start_steganography)
 
+        self.decode_button = QPushButton("Расшифровка", self)
+        self.decode_button.clicked.connect(self.select_decode_file)
+
         layout = QVBoxLayout()
         layout.addWidget(self.label)
         layout.addWidget(self.button)
         layout.addWidget(self.text_input)
         layout.addWidget(self.encode_button)
+        layout.addWidget(self.decode_button)
 
         container = QWidget()
         container.setLayout(layout)
@@ -144,6 +149,20 @@ class MainWindow(QMainWindow):
                 success_dialog.exec_()
         else:
             print("Выберите файл и введите текст для шифровки.")
+
+    def select_decode_file(self):
+        options = QFileDialog.Options()
+        file_name, _ = QFileDialog.getOpenFileName(self, "Выберите файл для расшифровки", "",
+                                                   "Все файлы (*);;Изображения (*.png *.jpg *.bmp)", options=options)
+        if file_name:
+            decoded_text = lsb.reveal(file_name)
+            if decoded_text:
+                print(f"Расшифрованный текст: {decoded_text}")
+                success_dialog = SuccessDialog()
+                success_dialog.success_label.setText("Расшифровка прошла успешно! Текст: " + decoded_text)
+                success_dialog.exec_()
+            else:
+                print("Не удалось расшифровать текст.")
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

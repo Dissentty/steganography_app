@@ -51,7 +51,9 @@ python main.py
 pip install pyinstaller
 
 2. Выполните команду для сборки:
-pyinstaller --noconsole --onefile app.py
+pyinstaller --icon icon.ico --onefile --windowed app.py
+
+Сборка исполняемого файла производится под операционную систему на который вы его собираете.
 
 ## Лицензия
 

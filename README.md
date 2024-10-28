@@ -26,7 +26,7 @@ pip install -r requirements.txt
 ## Запуск приложения
 
 Для запуска приложения выполните следующую команду в терминале:
-python main.py
+python app.py
 
 ## Использование
 
